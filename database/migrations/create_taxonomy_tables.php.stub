@@ -1,0 +1,43 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        $terms = config('taxonomy.tables.terms');
+
+        Schema::create($terms, function (Blueprint $table) use ($terms): void {
+            $table->id();
+            $table->string('vocabulary')->index();
+            $table->foreignId('parent_id')->nullable()->constrained($terms)->nullOnDelete();
+            $table->string('name');
+            // The lowercased name, for Terms in Open Vocabularies only: it keeps their names unique ignoring case.
+            $table->string('name_key')->nullable();
+            $table->string('slug');
+            $table->text('description')->nullable();
+            $table->integer('weight')->default(0);
+            $table->timestamps();
+
+            $table->unique(['vocabulary', 'name_key']);
+            $table->index(['vocabulary', 'parent_id', 'slug']);
+        });
+
+        Schema::create(config('taxonomy.tables.termables'), function (Blueprint $table) use ($terms): void {
+            $table->foreignId('term_id')->constrained($terms)->cascadeOnDelete();
+            $table->morphs('termable');
+            $table->unsignedInteger('position')->default(0);
+
+            $table->primary(['term_id', 'termable_type', 'termable_id']);
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists(config('taxonomy.tables.termables'));
+        Schema::dropIfExists(config('taxonomy.tables.terms'));
+    }
+};
