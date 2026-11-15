@@ -1,0 +1,73 @@
+{
+    "name": "webwizardsusa/laravel-taxonomy",
+    "description": "Drupal-style taxonomy for Laravel: free-tagging and hierarchical category vocabularies defined in code, with optional Filament fields and management pages.",
+    "keywords": [
+        "laravel",
+        "taxonomy",
+        "tags",
+        "categories",
+        "filament",
+        "filament-plugin",
+        "webwizardsusa"
+    ],
+    "homepage": "https://github.com/webwizardsusa/laravel-taxonomy",
+    "support": {
+        "issues": "https://github.com/webwizardsusa/laravel-taxonomy/issues",
+        "source": "https://github.com/webwizardsusa/laravel-taxonomy"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jamie Holly",
+            "email": "jamie@webwizardsusa.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "illuminate/console": "^12.0 || ^13.0",
+        "illuminate/contracts": "^12.0 || ^13.0",
+        "illuminate/database": "^12.0 || ^13.0",
+        "illuminate/support": "^12.0 || ^13.0",
+        "spatie/laravel-package-tools": "^1.92"
+    },
+    "require-dev": {
+        "filament/filament": "^5.0",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^5.2",
+        "pestphp/pest-plugin-laravel": "^5.0"
+    },
+    "suggest": {
+        "filament/filament": "For the term form fields, column, entry, filter and the management pages."
+    },
+    "autoload": {
+        "psr-4": {
+            "Webwizardsusa\\Taxonomy\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Webwizardsusa\\Taxonomy\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "pest"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webwizardsusa\\Taxonomy\\TaxonomyServiceProvider"
+            ],
+            "aliases": {
+                "Taxonomy": "Webwizardsusa\\Taxonomy\\Facades\\Taxonomy"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
