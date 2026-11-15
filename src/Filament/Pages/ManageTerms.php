@@ -7,6 +7,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -60,7 +61,7 @@ class ManageTerms extends Page implements HasTable
 
     public function mount(): void
     {
-        $key = static::getConfiguration()?->getKey();
+        $key = static::getConfiguration(Filament::getCurrentOrDefaultPanel())?->getKey();
 
         abort_unless($key !== null && Taxonomy::has($key), 404);
 
@@ -320,7 +321,7 @@ class ManageTerms extends Page implements HasTable
 
     protected static function getConfiguredVocabulary(): ?Vocabulary
     {
-        $key = static::getConfiguration()?->getKey();
+        $key = static::getConfiguration(Filament::getCurrentOrDefaultPanel())?->getKey();
 
         return $key !== null && Taxonomy::has($key) ? Taxonomy::vocabulary($key) : null;
     }
