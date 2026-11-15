@@ -249,7 +249,7 @@ class Term extends Model
         if (blank($this->slug)) {
             $this->slug = $this->freeSlug($vocabulary, Str::slug($this->name) ?: 'term');
         } elseif (! $this->exists || $this->isDirty(['vocabulary', 'parent_id', 'slug'])) {
-            if ($this->siblings($vocabulary)->where('slug', $this->slug)->exists()) {
+            if ($this->isSlugTaken()) {
                 throw new DuplicateTermException("The slug [{$this->slug}] is already taken in {$vocabulary->label()}.", 'slug');
             }
         }
@@ -276,13 +276,28 @@ class Term extends Model
         }
     }
 
+    /**
+     * Whether another Term already has this Term's name where it must be unique. Works on unsaved Terms too, so forms
+     * can check before saving.
+     */
+    public function isNameTaken(): bool
+    {
+        return $this->siblings(Taxonomy::vocabulary($this->vocabulary))
+            ->whereRaw('lower('.$this->getConnection()->getQueryGrammar()->wrap('name').') = ?', [static::nameKey(static::normalizeName($this->name))])
+            ->exists();
+    }
+
+    /**
+     * Whether another Term already has this Term's slug where it must be unique.
+     */
+    public function isSlugTaken(): bool
+    {
+        return filled($this->slug) && $this->siblings(Taxonomy::vocabulary($this->vocabulary))->where('slug', $this->slug)->exists();
+    }
+
     protected function ensureNameIsFree(Vocabulary $vocabulary): void
     {
-        $taken = $this->siblings($vocabulary)
-            ->whereRaw('lower('.$this->getConnection()->getQueryGrammar()->wrap('name').') = ?', [static::nameKey($this->name)])
-            ->exists();
-
-        if ($taken) {
+        if ($this->isNameTaken()) {
             throw new DuplicateTermException("A Term named [{$this->name}] already exists in {$vocabulary->label()}.", 'name');
         }
     }

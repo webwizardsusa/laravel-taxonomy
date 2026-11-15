@@ -27,11 +27,11 @@ class TaxonomyServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->singleton(Taxonomy::class);
-    }
+        $this->app->singleton(Taxonomy::class, static function ($app): Taxonomy {
+            $taxonomy = new Taxonomy($app);
+            $taxonomy->register(...$app['config']->get('taxonomy.vocabularies', []));
 
-    public function packageBooted(): void
-    {
-        $this->app->make(Taxonomy::class)->register(...config('taxonomy.vocabularies', []));
+            return $taxonomy;
+        });
     }
 }

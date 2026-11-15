@@ -18,6 +18,7 @@ return [
 
     'tree' => [
         'empty' => 'No terms yet.',
+        'move' => 'Drag to move',
         'move_refused' => "That move isn't allowed",
     ],
 ];

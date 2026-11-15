@@ -19,14 +19,17 @@ use Illuminate\Support\Facades\Schema;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use Webwizardsusa\Taxonomy\TaxonomyServiceProvider;
+use Webwizardsusa\Taxonomy\Tests\Fixtures\AdminPanelProvider;
 use Webwizardsusa\Taxonomy\Tests\Fixtures\CategoriesVocabulary;
 use Webwizardsusa\Taxonomy\Tests\Fixtures\TagsVocabulary;
 use Webwizardsusa\Taxonomy\Tests\Fixtures\TopicsVocabulary;
+use Webwizardsusa\Taxonomy\Tests\Fixtures\User;
 
 /**
  * Boots the package, and Filament and Livewire around it when they are installed: Filament is optional, and the CI
  * runs the suite without it too. Registers the fixture Vocabularies (open `tags`, closed hierarchical `categories`,
- * closed flat `topics`) and creates the taxonomy tables and an `articles` table to tag.
+ * closed flat `topics`) and creates the taxonomy tables, an `articles` table to tag and a `users` table. With Filament, an `admin` panel has
+ * the TaxonomyPlugin.
  */
 abstract class TestCase extends BaseTestCase
 {
@@ -54,6 +57,7 @@ abstract class TestCase extends BaseTestCase
             TablesServiceProvider::class,
             WidgetsServiceProvider::class,
             FilamentServiceProvider::class,
+            AdminPanelProvider::class,
         ] : [];
 
         return [...$filament, TaxonomyServiceProvider::class];
@@ -67,12 +71,22 @@ abstract class TestCase extends BaseTestCase
         $app['config']->set('app.key', 'base64:'.base64_encode(str_repeat('a', 32)));
         $app['config']->set('cache.default', 'array');
         $app['config']->set('database.default', 'testing');
+        $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('taxonomy.vocabularies', [TagsVocabulary::class, CategoriesVocabulary::class, TopicsVocabulary::class]);
     }
 
     protected function defineDatabaseMigrations(): void
     {
         (include __DIR__.'/../database/migrations/create_taxonomy_tables.php.stub')->up();
+
+        Schema::create('users', function (Blueprint $table): void {
+            $table->id();
+            $table->string('name');
+            $table->string('email');
+            $table->string('password');
+            $table->rememberToken();
+            $table->timestamps();
+        });
 
         Schema::create('articles', function (Blueprint $table): void {
             $table->id();
