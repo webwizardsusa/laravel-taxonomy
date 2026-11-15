@@ -144,7 +144,7 @@ class ManageTerms extends Page implements HasTable
         return [
             CreateAction::make()
                 ->model(Taxonomy::termModel())
-                ->modelLabel(str($vocabulary->label())->singular()->lower()->toString())
+                ->modelLabel($this->getTermLabel())
                 ->schema(fn (): array => $this->getTermFormComponents())
                 ->mutateDataUsing(fn (array $data): array => [...$data, 'vocabulary' => $vocabulary::key()])
                 ->visible(fn (): bool => TermGate::allows('create', $vocabulary))
@@ -267,9 +267,18 @@ class ManageTerms extends Page implements HasTable
         ];
     }
 
+    /**
+     * What one of this Vocabulary's Terms is called in action labels: "category" for Categories.
+     */
+    protected function getTermLabel(): string
+    {
+        return str($this->getVocabulary()->label())->singular()->lower()->toString();
+    }
+
     protected function makeEditAction(string $name): EditAction
     {
         return EditAction::make($name)
+            ->modelLabel($this->getTermLabel())
             ->schema(fn (Term $record): array => $this->getTermFormComponents($record))
             ->visible(fn (?Term $record): bool => $record !== null && TermGate::allows('update', $record))
             ->after(fn () => $this->treeVersion++);

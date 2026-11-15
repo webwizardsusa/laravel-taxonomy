@@ -15,6 +15,9 @@
                 'canReorder' => $this->canReorderTree(),
             ])
         </div>
+
+        {{-- The page leaves action modals to the table on table pages, and the tree has no table. --}}
+        <x-filament-actions::modals />
     @else
         {{ $this->table }}
     @endif

@@ -175,6 +175,22 @@ it('shows a hierarchical vocabulary as a tree', function (): void {
     manageTerms('categories')->assertSeeInOrder(['Cars', 'Accessories', 'Phones']);
 });
 
+it('renders the action modals on the tree, which has no table to render them', function (): void {
+    manageCategory('Cars');
+
+    manageTerms('categories')->assertSeeHtml('wire:partial="action-modals"');
+});
+
+it('names actions after the vocabulary\'s terms', function (): void {
+    $cars = manageCategory('Cars');
+
+    manageTerms('categories')
+        ->assertActionHasLabel('create', 'New category')
+        ->assertActionHasLabel(TestAction::make('editTerm')->arguments(['term' => $cars->id]), 'Edit')
+        ->mountAction(TestAction::make('editTerm')->arguments(['term' => $cars->id]))
+        ->assertMountedActionModalSee('Edit category');
+});
+
 it('moves a dropped term under its new parent and reorders its new siblings', function (): void {
     $cars = manageCategory('Cars');
     $tyres = manageCategory('Tyres', $cars);
