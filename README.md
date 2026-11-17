@@ -1,5 +1,12 @@
 # Laravel Taxonomy
 
+[![Latest version on Packagist](https://img.shields.io/packagist/v/webwizardsusa/laravel-taxonomy.svg)](https://packagist.org/packages/webwizardsusa/laravel-taxonomy)
+[![Tests](https://github.com/webwizardsusa/laravel-taxonomy/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/webwizardsusa/laravel-taxonomy/actions/workflows/tests.yml)
+[![Total downloads](https://img.shields.io/packagist/dt/webwizardsusa/laravel-taxonomy.svg)](https://packagist.org/packages/webwizardsusa/laravel-taxonomy/stats)
+[![PHP version](https://img.shields.io/packagist/dependency-v/webwizardsusa/laravel-taxonomy/php.svg)](https://packagist.org/packages/webwizardsusa/laravel-taxonomy)
+[![Laravel version](https://img.shields.io/packagist/dependency-v/webwizardsusa/laravel-taxonomy/illuminate/support.svg?label=Laravel)](https://laravel.com)
+[![License](https://img.shields.io/packagist/l/webwizardsusa/laravel-taxonomy.svg)](https://github.com/webwizardsusa/laravel-taxonomy/blob/main/LICENSE.md)
+
 Drupal-style taxonomy for Laravel. Records are tagged with **Terms** from **Vocabularies**. A Vocabulary is either
 **open**, for free tagging, where typing a new name creates the Term, or **closed**, for categories that administrators
 curate, and closed Vocabularies can be hierarchical. Vocabularies are classes in your code; only Terms live in the
