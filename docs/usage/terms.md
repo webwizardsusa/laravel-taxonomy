@@ -78,8 +78,9 @@ Term::findOrCreateByName('tags', 'PHP');                           // Open Vocab
 
 All of them return instances of the configured Term model.
 
-- **`findBySlug()`** looks at the whole Vocabulary. In a hierarchical Vocabulary the same slug can exist under
-  different parents, and it returns the oldest. Use `findByPath()` there.
+- **`findBySlug()`** looks at the whole of a flat Vocabulary. In a hierarchical one, where the same slug can exist
+  under different parents, it only matches top-level Terms, as a bare slug does in the
+  [query scopes](querying-records.md#strings-are-slugs-and-term-paths). Use `findByPath()` for nested Terms.
 - **`findByPath()`** walks the path from the top level down. Leading and trailing slashes are ignored. In a flat
   Vocabulary only a single slug matches; a path with more segments returns `null`.
 - **`findByPathOrFail()`** throws Laravel's `ModelNotFoundException`, which renders as a 404 in a controller:

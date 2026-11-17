@@ -53,12 +53,22 @@ $panel->pages([
 
 The argument to `make()` is the Vocabulary key.
 
-### Changing the navigation group
+### Changing the navigation group and sort
 
-The group label comes from the `taxonomy::taxonomy.navigation_group` translation; there's no method to set it. To
-rename it, publish the translations and edit `navigation_group` (see
-[views and translations](../extending/views-and-translations.md)). The plugin has no option for the group, and the
-pages have no navigation sort set.
+```php
+TaxonomyPlugin::make()
+    ->navigationGroup('Content')
+    ->navigationSort(3);
+```
+
+- **`navigationGroup()`** takes a string, an enum case (as for any Filament group) or a closure returning either.
+  Without it, or with `null`, the group label comes from the `taxonomy::taxonomy.navigation_group` translation
+  ("Taxonomy"; see [views and translations](../extending/views-and-translations.md)).
+- **`navigationSort()`** sets the sort of every management page. They keep the order of the Vocabularies among
+  themselves. Without it, the pages have no navigation sort.
+
+Pages you register [without the plugin](#registering-pages-without-the-plugin) in a panel that doesn't have it use
+the translation and no sort.
 
 ## The Term form
 

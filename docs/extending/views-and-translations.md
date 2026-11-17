@@ -15,7 +15,7 @@ next to `en` (for example `lang/vendor/taxonomy/de/taxonomy.php`). Laravel uses 
 
 | Key | Default | Used for |
 | --- | --- | --- |
-| `navigation_group` | Taxonomy | The navigation group of the management pages |
+| `navigation_group` | Taxonomy | The navigation group of the management pages, unless the plugin sets one |
 | `fields.name` | Name | The Term form, the table column, validation messages |
 | `fields.slug` | Slug | The same |
 | `fields.description` | Description | The Term form |
@@ -30,8 +30,10 @@ next to `en` (for example `lang/vendor/taxonomy/de/taxonomy.php`). Laravel uses 
 
 ### Renaming the navigation group
 
-The management pages take their navigation group from `navigation_group`, and nothing else sets it. To file them
-under "Content" instead of "Taxonomy":
+The management pages take their navigation group from `navigation_group` unless
+[`TaxonomyPlugin::navigationGroup()`](../filament/management-pages.md#changing-the-navigation-group-and-sort) sets
+one; use the plugin option for a single panel, and the translation to rename the group everywhere or per locale. To
+file them under "Content" instead of "Taxonomy":
 
 ```php
 // lang/vendor/taxonomy/en/taxonomy.php

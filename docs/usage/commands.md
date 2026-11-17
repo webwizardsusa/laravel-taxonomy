@@ -23,6 +23,7 @@ Reports every Term that breaks its Vocabulary's current rules:
 | Name [...] is repeated in the vocabulary. | A Closed Vocabulary was made open: names that were unique among siblings now clash |
 | Slug [...] is repeated in the vocabulary. | The same, for slugs |
 | Name [...] is repeated among its siblings. | Data written around the model, such as raw inserts |
+| Its name key is missing or stale, so it is not found by name: save the Term to set it. | A Closed Vocabulary was made open, or data was written around the model |
 
 Names are compared ignoring case. For each group of duplicates, the first Term (lowest id) is left out of the report
 and the others are listed, so the report shows which ones to rename or merge.
@@ -38,10 +39,11 @@ php artisan taxonomy:check || echo "Fix the taxonomy data before going on"
 
 Open Vocabularies match names through a stored lowercased copy of the name (`name_key`), which is only filled in for
 Terms saved while their Vocabulary is open. Terms created while it was closed don't have it until they're saved
-again, and `taxonomy:check` doesn't report that. Until then, tagging by one of their names can fail with a
+again, and `taxonomy:check` reports each of them. Until then, tagging by one of their names can fail with a
 `DuplicateTermException` instead of finding the Term.
 
-After switching, fix the duplicates `taxonomy:check` reports, then save each Term once so the key is filled in:
+After switching, fix the repeated names `taxonomy:check` reports (saving a Term whose name another one repeats fails
+on the unique index), then save each Term once so the key is filled in:
 
 ```php
 use Webwizardsusa\Taxonomy\Facades\Taxonomy;

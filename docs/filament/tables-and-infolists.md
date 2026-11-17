@@ -26,7 +26,7 @@ The column eager loads the Records' `terms` relation, so the whole table's Terms
 `TermsColumn`s it has. It is a Filament `TextColumn`, so `->limitList()`, `->color()`, `->toggleable()` and the like
 work as usual.
 
-The table's model must use `HasTerms`.
+A Record without `HasTerms` shows no Terms, and the column doesn't eager load anything for such a model.
 
 ## TermsEntry
 

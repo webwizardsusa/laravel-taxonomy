@@ -51,9 +51,9 @@ $post->syncTerms('tags', ['PHP', 'Laravel']);   // now exactly PHP and Laravel, 
 $post->attachTerms('tags', ['Pest']);           // PHP, Laravel, Pest
 $post->detachTerms('tags', ['laravel']);        // PHP, Pest
 
-$post->syncTerms('categories', [$cars]);        // Closed: models or ids
-$post->attachTerms('categories', [$accessories->id]);
-$post->detachTerms('categories', ['cars/accessories']);
+$post->syncTerms('categories', [$cars]);        // Closed: models, ids or Term Paths
+$post->attachTerms('categories', ['cars/accessories']);
+$post->detachTerms('categories', [$accessories->id]);
 ```
 
 - **`syncTerms($vocabulary, $terms)`** makes the given Terms the Record's only Terms in that Vocabulary, in the
@@ -71,22 +71,17 @@ read is fresh.
 | --- | --- | --- |
 | A Term model | Yes | Yes |
 | An integer id | Yes | Yes |
-| A numeric string (`'12'`) | A **name** when syncing or attaching | An id |
-| Any other string | A name; new names create Terms | Refused by sync and attach |
+| A numeric string (`'12'`) | A **name** | An id |
+| Any other string | A name; new names create Terms | A [Term Path](terms.md#slugs-and-term-paths) (`'cars/accessories'`) |
 
-`syncTerms()` and `attachTerms()` also:
+All three methods read what you pass the same way. `syncTerms()` and `attachTerms()` also:
 
 - skip blank names and repeated Terms,
 - match names ignoring case, so `'php'` attaches the existing "PHP",
-- throw an `InvalidArgumentException` for an id that doesn't exist, a Term from another Vocabulary, or a name passed
-  to a Closed Vocabulary.
+- throw an `InvalidArgumentException` for an id that doesn't exist, a Term Path that matches no Term, or a Term from
+  another Vocabulary.
 
-`detachTerms()` is more lenient. It takes models and ids, names for Open Vocabularies, and Term Paths
-(`'cars/accessories'`) for Closed ones. Anything it can't find is skipped.
-
-> [!WARNING]
-> `detachTerms()` treats any numeric string as an id, in Open Vocabularies too. To detach a tag named "2024", pass the
-> Term model or its id rather than the string `'2024'`.
+`detachTerms()` is more lenient: it creates nothing, and skips anything it can't find.
 
 > [!NOTE]
 > Creating tags by name through `syncTerms()` and `attachTerms()` is not subject to the Term policy. The policy's
