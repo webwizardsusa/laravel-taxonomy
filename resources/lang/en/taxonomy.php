@@ -13,7 +13,6 @@ return [
 
     'validation' => [
         'existing_only' => 'You can only choose existing :vocabulary.',
-        'wrong_vocabulary' => 'Choose :vocabulary only.',
     ],
 
     'tree' => [
