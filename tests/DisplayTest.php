@@ -5,6 +5,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -16,6 +17,7 @@ use Webwizardsusa\Taxonomy\Filament\Tables\Columns\TermsColumn;
 use Webwizardsusa\Taxonomy\Filament\Tables\Filters\TermsFilter;
 use Webwizardsusa\Taxonomy\Models\Term;
 use Webwizardsusa\Taxonomy\Tests\Fixtures\Article;
+use Webwizardsusa\Taxonomy\Tests\Fixtures\User;
 use Webwizardsusa\Taxonomy\Tests\TestCase;
 
 uses(TestCase::class);
@@ -44,6 +46,23 @@ if (class_exists(Component::class) && interface_exists(HasTable::class)) {
                     TermsFilter::make('categories')->includingDescendants($this->descendants),
                     TermsFilter::make('tags')->multiple(),
                 ]);
+        }
+
+        public function render(): string
+        {
+            return '<div>{{ $this->table }}</div>';
+        }
+    }
+
+    class DisplayUsersTable extends Component implements HasActions, HasSchemas, HasTable
+    {
+        use InteractsWithActions;
+        use InteractsWithSchemas;
+        use InteractsWithTable;
+
+        public function table(Table $table): Table
+        {
+            return $table->query(User::query())->columns([TextColumn::make('name'), TermsColumn::make('tags')]);
         }
 
         public function render(): string
@@ -92,6 +111,14 @@ it('shows each row\'s tags in order, loading them all in one query', function ()
     $termQueries = collect(DB::getQueryLog())->filter(fn (array $query): bool => str_contains($query['query'], 'taxonomy_termables'));
 
     expect($termQueries)->toHaveCount(1);
+});
+
+it('shows no terms for records without HasTerms', function (): void {
+    $user = User::create(['name' => 'Jamie', 'email' => 'jamie@example.com', 'password' => 'secret']);
+
+    Livewire::test(DisplayUsersTable::class)
+        ->assertCanSeeTableRecords([$user])
+        ->assertSee('Jamie');
 });
 
 it('filters by a category and everything under it', function (bool $descendants, array $visible): void {

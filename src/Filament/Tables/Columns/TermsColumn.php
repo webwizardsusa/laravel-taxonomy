@@ -11,7 +11,7 @@ use Webwizardsusa\Taxonomy\Filament\Concerns\HasVocabulary;
 
 /**
  * A record's Terms in one Vocabulary as badges, in the order they were given. The table loads every row's Terms in
- * one query.
+ * one query. A record without HasTerms shows none.
  */
 class TermsColumn extends TextColumn
 {
@@ -24,6 +24,10 @@ class TermsColumn extends TextColumn
         $this->badge();
 
         $this->state(static function (TermsColumn $column, Model $record): array {
+            if (! static::usesTerms($record)) {
+                return [];
+            }
+
             /** @var HasTerms $record */
             return $record->termsIn($column->getVocabulary())->pluck('name')->all();
         });
@@ -31,7 +35,7 @@ class TermsColumn extends TextColumn
 
     public function applyEagerLoading(Builder|Relation $query): Builder|Relation
     {
-        if (array_key_exists('terms', $query->getEagerLoads())) {
+        if (! static::usesTerms($query->getModel()) || array_key_exists('terms', $query->getEagerLoads())) {
             return $query;
         }
 
