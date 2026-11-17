@@ -150,9 +150,20 @@ class Term extends Model
         $query->orderBy($query->qualifyColumn('name'))->orderBy($query->qualifyColumn('id'));
     }
 
+    /**
+     * Finds a Term by its slug. In a hierarchical Vocabulary, where Terms under different parents may share a slug,
+     * only top-level Terms match, as with a bare slug in the query scopes: use findByPath() to reach the others.
+     */
     public static function findBySlug(string|Vocabulary $vocabulary, string $slug): ?Term
     {
-        return Taxonomy::newTermQuery()->inVocabulary($vocabulary)->where('slug', $slug)->orderBy('id')->first();
+        $vocabulary = Taxonomy::vocabulary($vocabulary);
+
+        return Taxonomy::newTermQuery()
+            ->inVocabulary($vocabulary)
+            ->when($vocabulary->isHierarchical(), fn (Builder $query) => $query->whereNull('parent_id'))
+            ->where('slug', $slug)
+            ->orderBy('id')
+            ->first();
     }
 
     /**

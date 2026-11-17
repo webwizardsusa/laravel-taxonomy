@@ -14,6 +14,18 @@ it('finds a term by slug within its vocabulary', function (): void {
         ->and(Term::findBySlug('tags', 'nope'))->toBeNull();
 });
 
+it('finds only top-level terms by slug in a hierarchical vocabulary', function (): void {
+    $phones = Term::create(['vocabulary' => 'categories', 'name' => 'Phones']);
+    Term::create(['vocabulary' => 'categories', 'name' => 'Accessories', 'parent_id' => $phones->id]);
+
+    expect(Term::findBySlug('categories', 'accessories'))->toBeNull();
+
+    $accessories = Term::create(['vocabulary' => 'categories', 'name' => 'Accessories']);
+
+    expect(Term::findBySlug('categories', 'accessories')->is($accessories))->toBeTrue()
+        ->and(Term::findBySlug('categories', 'phones')->is($phones))->toBeTrue();
+});
+
 it('finds the right one of two same-named categories by path', function (): void {
     $cars = Term::create(['vocabulary' => 'categories', 'name' => 'Cars']);
     $phones = Term::create(['vocabulary' => 'categories', 'name' => 'Phones']);
