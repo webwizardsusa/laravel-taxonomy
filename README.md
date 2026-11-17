@@ -50,7 +50,7 @@ Post::withAnyTerms(['php'], 'tags')->get();
 
 ## Documentation
 
-Read the full documentation at [https://DOCS_SITE_URL/docs/laravel-taxonomy](https://DOCS_SITE_URL/docs/laravel-taxonomy).
+Read the full documentation in the [`docs` folder](https://github.com/webwizardsusa/laravel-taxonomy/tree/main/docs).
 
 ## License
 
