@@ -10,8 +10,8 @@ use Webwizardsusa\Taxonomy\Vocabulary;
 
 /**
  * Turns what callers pass for a Vocabulary's Terms into Term models, in the order given, without repeats. Term models
- * and integer ids are taken as they are. Strings are names in an Open Vocabulary, and ids in a Closed one, which
- * takes no names.
+ * and integer ids are taken as they are. Strings are names in an Open Vocabulary, and in a Closed one, which takes no
+ * names, ids when they're all digits and Term Paths otherwise.
  */
 final class TermResolver
 {
@@ -35,7 +35,8 @@ final class TermResolver
                 'term' => $value,
                 'id' => $found->get($value) ?? throw new InvalidArgumentException("There's no Term with the id [{$value}]."),
                 'name' => Term::findOrCreateByName($vocabulary, $value),
-                default => throw new InvalidArgumentException("{$vocabulary->label()} is closed: pass Term models or ids, not names."),
+                default => Term::findByPath($vocabulary, $value)
+                    ?? throw new InvalidArgumentException("There's no Term at the path [{$value}] in {$vocabulary->label()}."),
             };
 
             if ($term->vocabulary !== $vocabulary::key()) {
@@ -49,8 +50,8 @@ final class TermResolver
     }
 
     /**
-     * Finds the Terms the values stand for, the way resolve() reads them, and also takes Term Paths in a Closed
-     * Vocabulary. Nothing is created: values that match no Term, and Terms of another Vocabulary, are skipped.
+     * Finds the Terms the values stand for, the way resolve() reads them. Nothing is created: values that match no
+     * Term, and Terms of another Vocabulary, are skipped.
      *
      * @param  iterable<Term|int|string>  $terms
      * @return Collection<int, Term>

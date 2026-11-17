@@ -44,14 +44,22 @@ it('takes models, ids and names together', function (): void {
     expect(hasTermsNames($this->article, 'tags'))->toBe(['Laravel', 'Testing', 'PHP']);
 });
 
-it('takes ids as strings for closed vocabularies, but not names', function (): void {
+it('takes ids as strings and term paths for closed vocabularies', function (): void {
     $cars = Term::create(['vocabulary' => 'categories', 'name' => 'Cars']);
+    Term::create(['vocabulary' => 'categories', 'name' => 'Accessories', 'parent_id' => $cars->id]);
 
-    $this->article->syncTerms('categories', [(string) $cars->id]);
-    expect(hasTermsNames($this->article, 'categories'))->toBe(['Cars']);
+    $this->article->syncTerms('categories', [(string) $cars->id, 'cars/accessories']);
+    expect(hasTermsNames($this->article, 'categories'))->toBe(['Cars', 'Accessories']);
+
+    $this->article->attachTerms('topics', [Term::create(['vocabulary' => 'topics', 'name' => 'Travel'])->slug]);
+    expect(hasTermsNames($this->article, 'topics'))->toBe(['Travel']);
+});
+
+it('refuses a term path that matches no category', function (): void {
+    Term::create(['vocabulary' => 'categories', 'name' => 'Cars']);
 
     $this->article->syncTerms('categories', ['Cars']);
-})->throws(InvalidArgumentException::class, 'Categories is closed: pass Term models or ids, not names.');
+})->throws(InvalidArgumentException::class, "There's no Term at the path [Cars] in Categories.");
 
 it('refuses terms from another vocabulary', function (): void {
     $cars = Term::create(['vocabulary' => 'categories', 'name' => 'Cars']);

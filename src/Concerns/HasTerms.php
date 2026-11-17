@@ -62,7 +62,8 @@ trait HasTerms
     }
 
     /**
-     * Makes the given Terms the record's only Terms in this Vocabulary, in this order.
+     * Makes the given Terms the record's only Terms in this Vocabulary, in this order. Takes Term models and ids, and
+     * names (created when they're new) in an Open Vocabulary or Term Paths in a Closed one.
      *
      * @param  iterable<Term|int|string>  $terms
      */
@@ -101,8 +102,8 @@ trait HasTerms
     }
 
     /**
-     * Removes the given Terms, read as syncTerms() reads them (Term Paths are taken in Closed Vocabularies too). Values
-     * that match none of the record's Terms are ignored.
+     * Removes the given Terms, read as syncTerms() reads them. Values that match none of the record's Terms are
+     * ignored.
      *
      * @param  iterable<Term|int|string>  $terms
      */
