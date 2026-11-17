@@ -79,6 +79,18 @@ it('adds a page per vocabulary under the taxonomy group', function (): void {
     $this->get('/admin/taxonomy/categories')->assertSuccessful();
 });
 
+it('takes the navigation group and sort from the plugin', function (): void {
+    expect(ManageTerms::getNavigationGroup())->toBe('Taxonomy')
+        ->and(ManageTerms::getNavigationSort())->toBeNull();
+
+    Filament::getPanel('admin')->getPlugin('taxonomy')->navigationGroup(fn (): string => 'Content')->navigationSort(5);
+
+    expect(ManageTerms::getNavigationGroup())->toBe('Content')
+        ->and(ManageTerms::getNavigationSort())->toBe(5);
+
+    $this->get('/admin/taxonomy/tags')->assertSuccessful()->assertSeeInOrder(['Content', 'Tags', 'Categories', 'Topics']);
+});
+
 it('only adds pages for the vocabularies it is given', function (): void {
     $panel = Panel::make()->id('limited');
 

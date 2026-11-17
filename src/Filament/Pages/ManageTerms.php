@@ -28,6 +28,7 @@ use Webwizardsusa\Taxonomy\Exceptions\DuplicateTermException;
 use Webwizardsusa\Taxonomy\Exceptions\InvalidParentException;
 use Webwizardsusa\Taxonomy\Facades\Taxonomy;
 use Webwizardsusa\Taxonomy\Filament\Forms\Components\TermSelect;
+use Webwizardsusa\Taxonomy\Filament\TaxonomyPlugin;
 use Webwizardsusa\Taxonomy\Models\Term;
 use Webwizardsusa\Taxonomy\Support\TermGate;
 use Webwizardsusa\Taxonomy\Support\TermTree;
@@ -87,7 +88,12 @@ class ManageTerms extends Page implements HasTable
 
     public static function getNavigationGroup(): string|UnitEnum|null
     {
-        return __('taxonomy::taxonomy.navigation_group');
+        return TaxonomyPlugin::current()?->getNavigationGroup() ?? __('taxonomy::taxonomy.navigation_group');
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return TaxonomyPlugin::current()?->getNavigationSort() ?? parent::getNavigationSort();
     }
 
     public static function getNavigationIcon(): string|BackedEnum|Htmlable|null
