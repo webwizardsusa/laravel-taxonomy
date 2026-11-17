@@ -225,7 +225,10 @@ class Term extends Model
         return (string) preg_replace('/\s+/u', ' ', trim((string) $name));
     }
 
-    protected static function nameKey(string $name): string
+    /**
+     * The key an Open Vocabulary matches names by, stored as `name_key`: the normalized name in lower case.
+     */
+    public static function nameKey(string $name): string
     {
         return mb_strtolower($name);
     }

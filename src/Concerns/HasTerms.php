@@ -101,28 +101,17 @@ trait HasTerms
     }
 
     /**
-     * Removes the given Terms: models, ids, or names (Open Vocabularies) and Term Paths (Closed ones).
+     * Removes the given Terms, read as syncTerms() reads them (Term Paths are taken in Closed Vocabularies too). Values
+     * that match none of the record's Terms are ignored.
      *
      * @param  iterable<Term|int|string>  $terms
      */
     public function detachTerms(string|Vocabulary $vocabulary, iterable $terms): void
     {
         $vocabulary = Taxonomy::vocabulary($vocabulary);
-        $current = $this->currentTermIds($vocabulary);
-        $ids = [];
+        $ids = TermResolver::find($vocabulary, $terms)->modelKeys();
 
-        foreach ($terms as $term) {
-            $ids[] = match (true) {
-                $term instanceof Term => $term->getKey(),
-                is_int($term), is_string($term) && ctype_digit($term) => (int) $term,
-                $vocabulary->isOpen() => Taxonomy::newTermQuery()->inVocabulary($vocabulary)
-                    ->where('name_key', mb_strtolower(Term::normalizeName((string) $term)))
-                    ->value('id'),
-                default => Term::findByPath($vocabulary, (string) $term)?->getKey(),
-            };
-        }
-
-        $this->terms()->detach(array_values(array_intersect($current, array_filter($ids))));
+        $this->terms()->detach(array_values(array_intersect($this->currentTermIds($vocabulary), $ids)));
         $this->unsetRelation('terms');
     }
 

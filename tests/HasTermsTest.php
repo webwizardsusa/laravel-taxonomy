@@ -87,6 +87,27 @@ it('removes terms by model, id or name', function (): void {
     expect(hasTermsNames($this->article, 'tags'))->toBe(['Pest']);
 });
 
+it('reads strings of digits as tag names when removing, as when adding', function (): void {
+    $this->article->syncTerms('tags', ['PHP', '1984']);
+
+    $this->article->detachTerms('tags', [(string) Term::findBySlug('tags', 'php')->id]);
+    expect(hasTermsNames($this->article, 'tags'))->toBe(['PHP', '1984']);
+
+    $this->article->detachTerms('tags', ['1984', 'Unknown']);
+    expect(hasTermsNames($this->article, 'tags'))->toBe(['PHP']);
+});
+
+it('removes categories by id string or term path', function (): void {
+    $cars = Term::create(['vocabulary' => 'categories', 'name' => 'Cars']);
+    $accessories = Term::create(['vocabulary' => 'categories', 'name' => 'Accessories', 'parent_id' => $cars->id]);
+    $phones = Term::create(['vocabulary' => 'categories', 'name' => 'Phones']);
+    $this->article->syncTerms('categories', [$cars, $accessories, $phones]);
+
+    $this->article->detachTerms('categories', [(string) $phones->id, 'cars/accessories', 'nope']);
+
+    expect(hasTermsNames($this->article, 'categories'))->toBe(['Cars']);
+});
+
 it('takes its terms off the pivot when deleted', function (): void {
     $this->article->syncTerms('tags', ['PHP']);
 
