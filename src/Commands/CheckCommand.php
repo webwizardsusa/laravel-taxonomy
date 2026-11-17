@@ -10,6 +10,10 @@ use Webwizardsusa\Taxonomy\Models\Term;
 /**
  * Reports Terms that break their Vocabulary's current rules, which happens when a definition changes under existing
  * Terms (Closed to Open, hierarchical to flat) or a Vocabulary is no longer registered. It changes nothing.
+ *
+ * A Term in an Open Vocabulary whose `name_key` is missing (it was made while the Vocabulary was closed) or doesn't
+ * match its name can't be found by name, and typing its name again fails as a repeat. Saving the Term sets the key,
+ * once no other Term repeats its name.
  */
 class CheckCommand extends Command
 {
@@ -35,6 +39,14 @@ class CheckCommand extends Command
             if (! $vocabulary->isHierarchical()) {
                 foreach ($terms->whereNotNull('parent_id') as $term) {
                     $problems[] = [$key, $term->getKey(), 'Has a parent, but the vocabulary is flat.'];
+                }
+            }
+
+            if ($vocabulary->isOpen()) {
+                foreach ($terms as $term) {
+                    if ($term->getAttribute('name_key') !== Taxonomy::termModel()::nameKey(Term::normalizeName($term->name))) {
+                        $problems[] = [$key, $term->getKey(), 'Its name key is missing or stale, so it is not found by name: save the Term to set it.'];
+                    }
                 }
             }
 
