@@ -1,5 +1,8 @@
 # Laravel Taxonomy
 
+> **Under active development.** This package is still changing and may not be ready for production use yet. Until
+> 1.0, a minor release can include breaking changes, so check the changelog before you upgrade.
+
 [![Latest version on Packagist](https://img.shields.io/packagist/v/webwizardsusa/laravel-taxonomy.svg)](https://packagist.org/packages/webwizardsusa/laravel-taxonomy)
 [![Tests](https://github.com/webwizardsusa/laravel-taxonomy/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/webwizardsusa/laravel-taxonomy/actions/workflows/tests.yml)
 [![Total downloads](https://img.shields.io/packagist/dt/webwizardsusa/laravel-taxonomy.svg)](https://packagist.org/packages/webwizardsusa/laravel-taxonomy/stats)
